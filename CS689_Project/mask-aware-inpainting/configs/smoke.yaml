@@ -1,0 +1,9 @@
+experiment_name: infrastructure-smoke
+seed: 689
+device: auto
+output_dir: artifacts/smoke
+checkpoint_name: smoke_checkpoint.pt
+input_features: 8
+hidden_features: 16
+output_features: 4
+batch_size: 4
