@@ -37,6 +37,8 @@ def restore_rng_state(state: dict[str, Any]) -> None:
     """Restore a state produced by :func:`capture_rng_state`."""
     random.setstate(state["python"])
     np.random.set_state(state["numpy"])
-    torch.set_rng_state(state["torch"])
+    # Checkpoints loaded with map_location="cuda" can contain the CPU RNG
+    # tensor on CUDA, but torch.set_rng_state requires a CPU tensor.
+    torch.set_rng_state(state["torch"].detach().cpu())
     if torch.cuda.is_available() and "cuda" in state:
         torch.cuda.set_rng_state_all(state["cuda"])
