@@ -41,4 +41,8 @@ def restore_rng_state(state: dict[str, Any]) -> None:
     # tensor on CUDA, but torch.set_rng_state requires a CPU tensor.
     torch.set_rng_state(state["torch"].detach().cpu())
     if torch.cuda.is_available() and "cuda" in state:
-        torch.cuda.set_rng_state_all(state["cuda"])
+        cuda_states = [
+            rng_state.detach().cpu().to(dtype=torch.uint8)
+            for rng_state in state["cuda"]
+        ]
+        torch.cuda.set_rng_state_all(cuda_states)
